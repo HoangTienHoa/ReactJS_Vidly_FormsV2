@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import MoviesTable from "./moviesTable";
 import ListGroup from "./common/listGroup";
 import Pagination from "./common/pagination";
-import { getMovies } from "../services/fakeMovieService";
+import {deleteMovie, getMovies} from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
 import { paginate } from "../utils/paginate";
 import _ from "lodash";
+import {Link} from "react-router-dom";
 
 class Movies extends Component {
   state = {
@@ -18,12 +19,12 @@ class Movies extends Component {
 
   componentDidMount() {
     const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
-
     this.setState({ movies: getMovies(), genres });
   }
 
   handleDelete = movie => {
     const movies = this.state.movies.filter(m => m._id !== movie._id);
+    deleteMovie(movie._id);
     this.setState({ movies });
   };
 
@@ -46,7 +47,6 @@ class Movies extends Component {
   handleSort = sortColumn => {
     this.setState({ sortColumn });
   };
-
   getPagedData = () => {
     const {
       pageSize,
@@ -86,6 +86,11 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
+          <Link to='/movies/new'
+                className='btn btn-primary'
+                style={{marginBottom:20}}>
+            New Movie
+          </Link>
           <p>Showing {totalCount} movies in the database.</p>
           <MoviesTable
             movies={movies}
